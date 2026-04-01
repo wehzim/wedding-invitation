@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback, forwardRef } from 'react'
-import { fetchWishes } from '../api/wishes'
+import { fetchWishes, addLike } from '../api/wishes'
+
+const STORAGE_KEY = 'wedding_liked_wishes'
 
 export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwardedRef) => {
   const sectionRef = useRef(null)
@@ -8,17 +10,12 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
     if (typeof forwardedRef === 'function') forwardedRef(node)
     else if (forwardedRef) forwardedRef.current = node
   }, [forwardedRef])
-  const DUMMY_WISHES = [
-    { name: 'Farah & Hafiz', message: 'Semoga perkahwinan Azim & Nia diberkati Allah dan kekal bahagia hingga ke syurga. Tahniah!' },
-    { name: 'Auntie Rohani', message: 'Moga rumah tangga yang dibina penuh kasih sayang, harmoni dan dipanjangkan rezeki. Selamat pengantin baru!' },
-    { name: 'Zul Ariffin', message: 'Congratulations to the beautiful couple! May your love story be an inspiration to all of us.' },
-    { name: 'Kak Yati & Family', message: 'Doakan semoga jodoh ini berkekalan dunia akhirat. Barakallahu lakuma wa baraka alaikuma.' },
-    { name: 'Syafiq Danial', message: 'Wishing you both a lifetime of laughter, love and happiness. Tahniah Azim & Nia!' },
-  ]
 
   const [wishes, setWishes] = useState([])
   const [loading, setLoading] = useState(true)
   const [inView, setInView] = useState(false)
+  // TODO: use w.rowIndex as key instead of index `i` — already supported by API
+  const [hearts, setHearts] = useState({})
 
   // Poll via rAF until section is visually in viewport (works with Lenis transforms)
   useEffect(() => {
@@ -38,59 +35,52 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
 
   useEffect(() => {
     if (!inView) return
-    const t = setTimeout(() => {
-      setWishes(DUMMY_WISHES)
-      setLoading(false)
-    }, 5000)
-    return () => clearTimeout(t)
+    let cancelled = false
+
+    const load = async () => {
+      setLoading(true)
+      try {
+        const data = await fetchWishes()
+        if (!cancelled) {
+          const list = Array.isArray(data) ? data : []
+          setWishes(list)
+
+          // Hydrate hearts from API likes + localStorage liked state
+          let liked = {}
+          try { liked = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') } catch {}
+          setHearts(list.reduce((acc, w) => ({
+            ...acc,
+            [w.rowIndex]: { liked: !!liked[w.rowIndex], count: w.likes ?? 0 },
+          }), {}))
+        }
+      } catch {
+        if (!cancelled) setWishes([])
+      }
+      if (!cancelled) setLoading(false)
+    }
+
+    load()
+    const interval = setInterval(load, 30000)
+    window.addEventListener('ucapan-updated', load)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+      window.removeEventListener('ucapan-updated', load)
+    }
   }, [inView])
-  const STORAGE_KEY = 'wedding_liked_wishes'
-  // TODO: when switching to real data, replace index key `i` with the actual message ID (e.g. w.id)
-  //       so liked state survives list reorders
 
-  const [hearts, setHearts] = useState(() => {
-    let liked = {}
-    try { liked = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') } catch {}
-    return DUMMY_WISHES.reduce((acc, _, i) => ({
-      ...acc,
-      [i]: { liked: !!liked[i], count: Math.floor(Math.random() * 8) },
-    }), {})
-  })
-
-  const toggleHeart = i => {
+  const toggleHeart = (rowIndex) => {
     setHearts(h => {
-      if (h[i].liked) return h  // already liked — do nothing
-      const next = { ...h, [i]: { liked: true, count: h[i].count + 1 } }
+      if (h[rowIndex]?.liked) return h
+      const next = { ...h, [rowIndex]: { liked: true, count: (h[rowIndex]?.count ?? 0) + 1 } }
       try {
         const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, [i]: true }))
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, [rowIndex]: true }))
       } catch {}
+      addLike(rowIndex)
       return next
     })
   }
-
-  // TODO: remove dummy data and uncomment the fetch below when ready
-  // useEffect(() => {
-  //   let cancelled = false
-  //   const load = async () => {
-  //     setLoading(true)
-  //     try {
-  //       const data = await fetchWishes()
-  //       if (!cancelled) setWishes(Array.isArray(data) ? data : [])
-  //     } catch {
-  //       if (!cancelled) setWishes([])
-  //     }
-  //     if (!cancelled) setLoading(false)
-  //   }
-  //   load()
-  //   const interval = setInterval(load, 30000)
-  //   window.addEventListener('ucapan-updated', load)
-  //   return () => {
-  //     cancelled = true
-  //     clearInterval(interval)
-  //     window.removeEventListener('ucapan-updated', load)
-  //   }
-  // }, [])
 
   return (
     <section ref={setRef} className="flex flex-col items-center justify-start px-4 pt-16 pb-[90px]">
@@ -127,14 +117,14 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
         {!loading && wishes.length === 0 && (
           <p className="text-center text-sm text-primary opacity-60 italic">No messages yet. Be the first! 🌸</p>
         )}
-        {wishes.map((w, i) => (
-          <div key={i} className="relative text-center rounded-2xl px-5 pt-4 pb-10" style={{ background: 'rgba(255,250,247,0.85)' }}>
+        {wishes.map((w) => (
+          <div key={w.rowIndex} className="relative text-center rounded-2xl px-5 pt-4 pb-10" style={{ background: 'rgba(255,250,247,0.85)' }}>
             <p className="font-im-fell-english-regular-italic text-lg text-secondary italic">"{w.message}"</p>
             <div className="w-8 h-px bg-[#d4b896] mx-auto mt-3 mb-2" />
             <p className="text-xs tracking-widest text-primary font-semibold">{w.name}</p>
 
             <button
-              onClick={() => toggleHeart(i)}
+              onClick={() => toggleHeart(w.rowIndex)}
               className="absolute bottom-3 right-4 flex items-center gap-1"
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
@@ -142,15 +132,15 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
                 style={{
                   fontSize: '1.4rem',
                   lineHeight: 1,
-                  color: hearts[i]?.liked ? '#e07070' : '#d4b896',
-                  transform: hearts[i]?.liked ? 'scale(1.2)' : 'scale(1)',
+                  color: hearts[w.rowIndex]?.liked ? '#e07070' : '#d4b896',
+                  transform: hearts[w.rowIndex]?.liked ? 'scale(1.2)' : 'scale(1)',
                   transition: 'transform 0.2s cubic-bezier(0.25, 0, 0, 1), color 0.2s ease',
                   display: 'inline-block',
                 }}
               >
-                {hearts[i]?.liked ? '♥' : '♡'}
+                {hearts[w.rowIndex]?.liked ? '♥' : '♡'}
               </span>
-              <span className="text-xs" style={{ color: '#c9a27e' }}>{hearts[i]?.count ?? 0}</span>
+              <span className="text-xs" style={{ color: '#c9a27e' }}>{hearts[w.rowIndex]?.count ?? 0}</span>
             </button>
           </div>
         ))}
