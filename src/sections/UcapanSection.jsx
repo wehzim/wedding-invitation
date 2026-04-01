@@ -60,11 +60,9 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
     }
 
     load()
-    const interval = setInterval(load, 30000)
     window.addEventListener('ucapan-updated', load)
     return () => {
       cancelled = true
-      clearInterval(interval)
       window.removeEventListener('ucapan-updated', load)
     }
   }, [inView])
