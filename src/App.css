@@ -95,7 +95,7 @@ p {
 }
 
 .bottom-menu {
-  position: sticky;   /* stick relative to card scroll */
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -105,8 +105,9 @@ p {
   justify-content: space-around;
   align-items: center;
   padding: 10px 0;
+  padding-bottom: max(env(safe-area-inset-bottom), 10px);
   z-index: 40;
-  opacity: 0;               /* hidden by default */
+  opacity: 0;
   pointer-events: none;
   transition: opacity 0.8s ease;
 }
