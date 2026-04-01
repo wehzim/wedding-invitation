@@ -6,12 +6,13 @@ function doGet(e) {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Ucapan');
     const rows = sheet.getDataRange().getValues();
 
+    // Sheet columns: A=timestamp, B=name, C=message, D=likes, E=id
     const wishes = rows.slice(1)
-      .map((r, i) => ({
-        rowIndex: i + 2,           // actual sheet row (1-based, +1 for header)
-        name: String(r[1] || ''),
+      .map(r => ({
+        id:      String(r[4] || ''),
+        name:    String(r[1] || ''),
         message: String(r[2] || ''),
-        likes: Number(r[3] || 0),  // column D
+        likes:   Number(r[3] || 0),
       }))
       .filter(w => w.name && w.message)
       .reverse();
@@ -26,18 +27,25 @@ function doGet(e) {
       new Date(),
       e.parameter.name || '',
       e.parameter.message || '',
-      0,                           // likes starts at 0
+      0,                          // likes starts at 0
+      Utilities.getUuid(),        // unique id
     ]);
     return json({ status: 'ok' });
   }
 
   // ───────────── ADD LIKE ─────────────
   if (action === 'addLike') {
-    const rowIndex = Number(e.parameter.rowIndex);
-    if (!rowIndex || rowIndex < 2) return json({ status: 'error', message: 'Invalid rowIndex' });
+    const id = e.parameter.id;
+    if (!id) return json({ status: 'error', message: 'Missing id' });
 
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Ucapan');
-    const likesCell = sheet.getRange(rowIndex, 4);  // column D
+    const rows = sheet.getDataRange().getValues();
+
+    // Find the row with matching id (column E, index 4)
+    const rowIndex = rows.findIndex((r, i) => i > 0 && String(r[4]) === id);
+    if (rowIndex === -1) return json({ status: 'error', message: 'Message not found' });
+
+    const likesCell = sheet.getRange(rowIndex + 1, 4); // +1 because sheet rows are 1-based
     likesCell.setValue((Number(likesCell.getValue()) || 0) + 1);
     return json({ status: 'ok' });
   }

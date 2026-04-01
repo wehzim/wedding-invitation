@@ -22,7 +22,7 @@ export async function postWish(name, message) {
   window.dispatchEvent(new Event('ucapan-updated'))
 }
 
-export async function addLike(rowIndex) {
-  const params = new URLSearchParams({ action: 'addLike', rowIndex })
+export async function addLike(id) {
+  const params = new URLSearchParams({ action: 'addLike', id })
   await fetch(`${GOOGLE_SCRIPT_URL}?${params}`, { method: 'GET', mode: 'no-cors' })
 }

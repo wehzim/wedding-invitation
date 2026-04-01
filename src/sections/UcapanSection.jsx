@@ -45,12 +45,12 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
           const list = Array.isArray(data) ? data : []
           setWishes(list)
 
-          // Hydrate hearts from API likes + localStorage liked state
+          // Hydrate hearts: count from API, liked from localStorage (keyed by message id)
           let liked = {}
           try { liked = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') } catch {}
           setHearts(list.reduce((acc, w) => ({
             ...acc,
-            [w.rowIndex]: { liked: !!liked[w.rowIndex], count: w.likes ?? 0 },
+            [w.id]: { liked: !!liked[w.id], count: w.likes ?? 0 },
           }), {}))
         }
       } catch {
@@ -69,15 +69,15 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
     }
   }, [inView])
 
-  const toggleHeart = (rowIndex) => {
+  const toggleHeart = (id) => {
     setHearts(h => {
-      if (h[rowIndex]?.liked) return h
-      const next = { ...h, [rowIndex]: { liked: true, count: (h[rowIndex]?.count ?? 0) + 1 } }
+      if (h[id]?.liked) return h
+      const next = { ...h, [id]: { liked: true, count: (h[id]?.count ?? 0) + 1 } }
       try {
         const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, [rowIndex]: true }))
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...stored, [id]: true }))
       } catch {}
-      addLike(rowIndex)
+      addLike(id)
       return next
     })
   }
@@ -115,16 +115,19 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
           </div>
         )}
         {!loading && wishes.length === 0 && (
-          <p className="text-center text-sm text-primary opacity-60 italic">No messages yet. Be the first! 🌸</p>
+          <div className="flex flex-col items-center justify-center" style={{ minHeight: '40dvh' }}>
+            <p className="font-im-fell-english-regular-italic text-secondary italic text-lg">No messages yet.</p>
+            <p className="text-xs tracking-widest text-primary mt-2">Be the first to write one 🌸</p>
+          </div>
         )}
         {wishes.map((w) => (
-          <div key={w.rowIndex} className="relative text-center rounded-2xl px-5 pt-4 pb-10" style={{ background: 'rgba(255,250,247,0.85)' }}>
+          <div key={w.id} className="relative text-center rounded-2xl px-5 pt-4 pb-10" style={{ background: 'rgba(255,250,247,0.85)' }}>
             <p className="font-im-fell-english-regular-italic text-lg text-secondary italic">"{w.message}"</p>
             <div className="w-8 h-px bg-[#d4b896] mx-auto mt-3 mb-2" />
             <p className="text-xs tracking-widest text-primary font-semibold">{w.name}</p>
 
             <button
-              onClick={() => toggleHeart(w.rowIndex)}
+              onClick={() => toggleHeart(w.id)}
               className="absolute bottom-3 right-4 flex items-center gap-1"
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
@@ -132,15 +135,15 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, forwarde
                 style={{
                   fontSize: '1.4rem',
                   lineHeight: 1,
-                  color: hearts[w.rowIndex]?.liked ? '#e07070' : '#d4b896',
-                  transform: hearts[w.rowIndex]?.liked ? 'scale(1.2)' : 'scale(1)',
+                  color: hearts[w.id]?.liked ? '#e07070' : '#d4b896',
+                  transform: hearts[w.id]?.liked ? 'scale(1.2)' : 'scale(1)',
                   transition: 'transform 0.2s cubic-bezier(0.25, 0, 0, 1), color 0.2s ease',
                   display: 'inline-block',
                 }}
               >
-                {hearts[w.rowIndex]?.liked ? '♥' : '♡'}
+                {hearts[w.id]?.liked ? '♥' : '♡'}
               </span>
-              <span className="text-xs" style={{ color: '#c9a27e' }}>{hearts[w.rowIndex]?.count ?? 0}</span>
+              <span className="text-xs" style={{ color: '#c9a27e' }}>{hearts[w.id]?.count ?? 0}</span>
             </button>
           </div>
         ))}

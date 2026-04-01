@@ -8,6 +8,7 @@ import topRight from './assets/top-right.png'
 import botLeft from './assets/bot-left.png'
 import flower from './assets/flower.png'
 import pinkFlower from './assets/pink-flower.png'
+import bgImage from './assets/bg.png'
 import { CoverSection } from './sections/CoverSection'
 import { InvitationSection } from './sections/InvitationSection'
 import { ProgrammeSection } from './sections/ProgrammeSection'
@@ -170,7 +171,7 @@ function App() {
 					<source src={music} type="audio/mpeg" />
 				</audio>
 
-				<div className="card" ref={cardRef}>
+				<div className="card" ref={cardRef} style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
 					<div ref={cardContentRef}>
 						<CoverSection ref={coverRef} />
 						<div
