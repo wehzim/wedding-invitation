@@ -97,8 +97,10 @@ p {
 .bottom-menu {
   position: fixed;
   bottom: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
+  max-width: 420px;
   background: rgba(255, 255, 255, 0.9);
   border-top: 1px solid #ddd;
   display: flex;
@@ -128,4 +130,83 @@ p {
 .envelope-container.opened .bottom-menu {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* ─── DESKTOP BACKDROP ───────────────────────────────────────────────────────── */
+
+.desktop-backdrop {
+  position: relative;
+  background-color: #e8d9c8;
+  background-image: radial-gradient(ellipse at 50% 42%, #faf4ec 0%, #eddcca 55%, #cdb49a 100%);
+  overflow: hidden;
+}
+
+/* Grain texture overlay */
+.desktop-backdrop::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.045'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Vignette overlay */
+.desktop-backdrop::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(80, 45, 20, 0.28) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Desktop florals — hidden on mobile */
+.desktop-floral {
+  display: none;
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (min-width: 540px) {
+  .desktop-floral { display: block; }
+
+  .desktop-floral-tr {
+    top: -10px;
+    right: -10px;
+    width: clamp(220px, 22vw, 340px);
+    opacity: 0.65;
+  }
+
+  .desktop-floral-bl {
+    bottom: -10px;
+    left: -10px;
+    width: clamp(220px, 22vw, 340px);
+    opacity: 0.65;
+  }
+
+  .desktop-floral-tl {
+    top: 60px;
+    left: clamp(20px, 4vw, 80px);
+    width: clamp(80px, 8vw, 130px);
+    opacity: 0.45;
+    transform: rotate(-15deg);
+  }
+
+  .desktop-floral-br {
+    bottom: 80px;
+    right: clamp(20px, 4vw, 80px);
+    width: clamp(70px, 7vw, 115px);
+    opacity: 0.45;
+    transform: rotate(12deg);
+  }
+
+  /* Richer card shadow on desktop */
+  .card {
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.07),
+      0 12px 40px rgba(0, 0, 0, 0.16),
+      0 30px 80px rgba(80, 40, 10, 0.18) !important;
+  }
 }
