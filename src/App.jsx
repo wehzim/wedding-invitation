@@ -1,6 +1,23 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import './App.css'
+import img1 from './assets/1.jpg'
+import img2 from './assets/2.jpg'
+import img3 from './assets/3.jpg'
+import img4 from './assets/4.jpg'
+import img5 from './assets/5.jpeg'
+import bg from './assets/bg.png'
+import blueFlower from './assets/blue-flower.png'
+import botLeft from './assets/bot-left.png'
+import flower from './assets/flower.png'
+import frame from './assets/frame.png'
+import pinkFlower from './assets/pink-flower.png'
+import thing from './assets/thing.png'
+import title from './assets/title.png'
+import topRight from './assets/top-right.png'
+import webSvg from './assets/web-svg.svg'
+import whiteFlower from './assets/white-flower.png'
+import music from './sound/howls-moving-castle.mp3'
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUpdAMHdCdap0QLpa87MqmGQ_KbrPQ6w1Ul1R0_8sjaNgaDTIlNkrW8Xji2ehuHtk7lA/exec'
@@ -334,11 +351,11 @@ function UcapanModal({ show, onClose }) {
 
 // ─── IMAGE SLIDER SECTION ────────────────────────────────────────────────────
 const GALLERY_IMAGES = [
-  'src/assets/1.jpg',
-  'src/assets/2.jpg',
-  'src/assets/3.jpg',
-  'src/assets/4.jpg',
-  'src/assets/5.jpeg',
+  img1,
+  img2,
+  img3,
+  img4,
+  img5,
 ]
 
 function GallerySection() {
@@ -518,20 +535,20 @@ function App() {
           Azim <br /> & <br /> Nia
         </div>
         <audio ref={audioRef} id="bg-music" loop preload="auto">
-          <source src="src/sound/howls-moving-castle.mp3" type="audio/mpeg" />
+          <source src="{music}" type="audio/mpeg" />
         </audio>
 
         <div className="card">
 
           {/* ── Cover ── */}
           <section ref={coverRef} className="relative flex items-center justify-center min-h-screen bg-[#fcf0f0] overflow-hidden">
-            <img src="src/assets/frame.png" alt="Frame" className="w-[90%] h-auto md:w-[80%] lg:w-[70%] mx-auto -mt-[15%] md:-mt-[20%]" />
-            <img src="src/assets/flower.png" alt="" className="absolute top-0 left-0 w-24 md:w-32" />
-            <img src="src/assets/blue-flower.png" alt="" className="absolute top-1/2 left-0 w-20 md:w-28 -translate-y-1/2" />
-            <img src="src/assets/white-flower.png" alt="" className="absolute bottom-0 right-0 w-24 md:w-32 pb-[60px]" />
-            <img src="src/assets/pink-flower.png" alt="" className="absolute top-1/2 right-0 w-20 md:w-28 -translate-y-1/2" />
-            <img src="src/assets/top-right.png" alt="" className="absolute top-0 right-0 w-40 md:w-48" />
-            <img src="src/assets/bot-left.png" alt="" className="absolute bottom-0 left-0 w-40 md:w-48 pb-[60px]" />
+            <img src="{frame}" alt="Frame" className="w-[90%] h-auto md:w-[80%] lg:w-[70%] mx-auto -mt-[15%] md:-mt-[20%]" />
+            <img src="{flower}" alt="" className="absolute top-0 left-0 w-24 md:w-32" />
+            <img src="{blueFlower}" alt="" className="absolute top-1/2 left-0 w-20 md:w-28 -translate-y-1/2" />
+            <img src="{whiteFlower}" alt="" className="absolute bottom-0 right-0 w-24 md:w-32 pb-[60px]" />
+            <img src="{pinkFlower}" alt="" className="absolute top-1/2 right-0 w-20 md:w-28 -translate-y-1/2" />
+            <img src="{topRight}" alt="" className="absolute top-0 right-0 w-40 md:w-48" />
+            <img src="{botLeft}" alt="" className="absolute bottom-0 left-0 w-40 md:w-48 pb-[60px]" />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <p className="text-sm mb-5 text-primary tracking-wider">THE WEDDING OF</p>
               <h1 className="font-im-fell-english-regular-italic text-6xl mt-2 text-secondary">Azim</h1>
@@ -570,7 +587,7 @@ function App() {
           {/* ── Programme + Countdown ── */}
           <section ref={programRef} className="flex flex-col items-center justify-center py-16 bg-cover bg-center gap-8">
             <div className="relative w-[75%] max-w-xs mx-auto">
-              <img src="src/assets/thing.png" alt="Programme" className="w-full h-auto mb-5" />
+              <img src="{thing}" alt="Programme" className="w-full h-auto mb-5" />
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-black">
                 <p className="text-lg text-primary mt-5 mb-5 tracking-wider">PROGRAMME</p>
                 <p className="text-md mt-5">Lunch:</p>
