@@ -10,8 +10,16 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, ref) => 
     { name: 'Syafiq Danial', message: 'Wishing you both a lifetime of laughter, love and happiness. Tahniah Azim & Nia!' },
   ]
 
-  const [wishes, setWishes] = useState(DUMMY_WISHES)
-  const [loading, setLoading] = useState(false)
+  const [wishes, setWishes] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setWishes(DUMMY_WISHES)
+      setLoading(false)
+    }, 5000)
+    return () => clearTimeout(t)
+  }, [])
   const STORAGE_KEY = 'wedding_liked_wishes'
   // TODO: when switching to real data, replace index key `i` with the actual message ID (e.g. w.id)
   //       so liked state survives list reorders
@@ -61,13 +69,37 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, ref) => 
   // }, [])
 
   return (
-    <section ref={ref} className="flex flex-col items-center justify-start px-4 pt-40 pb-[80px]" style={{ height: '100dvh' }}>
+    <section ref={ref} className="flex flex-col items-center justify-start px-4 pt-16 pb-[90px]">
+      <div className="flex flex-col gap-3 w-full max-w-xs mb-20 shrink-0 items-center">
+        <button onClick={onWriteClick}
+          className="w-[75%] py-3 rounded-full text-sm text-white tracking-widest"
+          style={{ background: '#c9a27e' }}>
+          ✦ Write a message
+        </button>
+        <button onClick={onRSVPClick}
+          className="w-[75%] py-3 rounded-full text-sm tracking-widest"
+          style={{ background: '#fff', color: '#c9a27e', border: '1px solid #c9a27e' }}>
+          ✉ Confirm Attendance
+        </button>
+      </div>
+
       <p className="will-reveal text-xs tracking-[0.3em] text-primary mb-1">HEART TO HEART</p>
       <h2 className="will-reveal font-im-fell-english-regular-italic text-5xl text-secondary mb-2" style={{ transitionDelay: '0.08s' }}>Messages</h2>
       <div className="will-reveal w-16 h-px bg-[#c9a27e] mb-6" style={{ transitionDelay: '0.12s' }} />
 
-      <div className="will-reveal w-full max-w-sm flex-1 overflow-y-auto space-y-5 pr-1" style={{ transitionDelay: '0.2s' }} data-lenis-prevent>
-        {loading && <p className="text-center text-sm text-primary opacity-60 italic">Loading messages...</p>}
+      <div className="will-reveal w-full max-w-sm space-y-5" style={{ transitionDelay: '0.2s' }}>
+        {loading && (
+          <div className="flex flex-col items-center justify-center" style={{ minHeight: '40dvh' }}>
+            <div className="ucapan-ornaments">
+              <span style={{ animationDelay: '0s' }}>✦</span>
+              <span style={{ animationDelay: '0.3s' }}>✦</span>
+              <span style={{ animationDelay: '0.6s' }}>✦</span>
+            </div>
+            <p className="font-im-fell-english-regular-italic text-secondary italic text-lg mt-4 ucapan-loading-text">
+              Gathering wishes...
+            </p>
+          </div>
+        )}
         {!loading && wishes.length === 0 && (
           <p className="text-center text-sm text-primary opacity-60 italic">No messages yet. Be the first! 🌸</p>
         )}
@@ -100,18 +132,6 @@ export const UcapanSection = forwardRef(({ onWriteClick, onRSVPClick }, ref) => 
         ))}
       </div>
 
-      <div className="flex flex-col gap-3 w-full max-w-xs mt-6 shrink-0 items-center">
-        <button onClick={onWriteClick}
-          className="w-[75%] py-3 rounded-full text-sm text-white tracking-widest"
-          style={{ background: '#c9a27e' }}>
-          ✦ Write a message
-        </button>
-        <button onClick={onRSVPClick}
-          className="w-[75%] py-3 rounded-full text-sm tracking-widest text-white"
-          style={{ background: '#fff', color: '#c9a27e', border: '1px solid #c9a27e' }}>
-          ✉ Confirm Attendance
-        </button>
-      </div>
     </section>
   )
 })

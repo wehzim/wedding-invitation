@@ -131,52 +131,87 @@ function App() {
   }
 
   return (
-    <div className="desktop-backdrop flex items-center justify-center" style={{ minHeight: '100dvh' }}>
-      <img src={topRight}   className="desktop-floral desktop-floral-tr" alt="" />
-      <img src={botLeft}    className="desktop-floral desktop-floral-bl" alt="" />
-      <img src={flower}     className="desktop-floral desktop-floral-tl" alt="" />
-      <img src={pinkFlower} className="desktop-floral desktop-floral-br" alt="" />
+		<div
+			className="desktop-backdrop flex items-center justify-center"
+			style={{ minHeight: "100dvh" }}
+		>
+			<img
+				src={topRight}
+				className="desktop-floral desktop-floral-tr"
+				alt=""
+			/>
+			<img
+				src={botLeft}
+				className="desktop-floral desktop-floral-bl"
+				alt=""
+			/>
+			<img
+				src={flower}
+				className="desktop-floral desktop-floral-tl"
+				alt=""
+			/>
+			<img
+				src={pinkFlower}
+				className="desktop-floral desktop-floral-br"
+				alt=""
+			/>
 
-      <div className={`envelope-container ${opened ? 'opened' : ''}`}>
-        {!panelsGone && <div className="panel left"></div>}
-        {!panelsGone && <div className="panel right"></div>}
+			<div className={`envelope-container ${opened ? "opened" : ""}`}>
+				{!panelsGone && <div className="panel left"></div>}
+				{!panelsGone && <div className="panel right"></div>}
 
-        <div className="seal text-center font-im-fell-english-regular-italic" onClick={handleSealClick}>
-          Azim <br /> & <br /> Nia
-        </div>
-        <audio ref={audioRef} id="bg-music" loop preload="auto">
-          <source src={music} type="audio/mpeg" />
-        </audio>
+				<div
+					className="seal text-center font-im-fell-english-regular-italic"
+					onClick={handleSealClick}
+				>
+					Azim <br /> & <br /> Nia
+				</div>
+				<audio ref={audioRef} id="bg-music" loop preload="auto">
+					<source src={music} type="audio/mpeg" />
+				</audio>
 
-        <div className="card" ref={cardRef}>
-          <div ref={cardContentRef}>
-            <CoverSection ref={coverRef} />
-            <InvitationSection ref={inviteRef} />
-            <ProgrammeSection ref={programRef} days={days} />
-            <GallerySection ref={galleryRef} />
-            <UcapanSection
-              ref={ucapanRef}
-              onWriteClick={() => setModal('ucapan')}
-              onRSVPClick={() => setModal('rsvp')}
-            />
-          </div>
-          <BottomMenu
-            onCall={() => setModal('call')}
-            onLocation={openLocation}
-            onRSVP={() => setModal('rsvp')}
-            onGift={() => setModal('gift')}
-            musicPlaying={musicPlaying}
-            onMusicToggle={handleMusicToggle}
-          />
-        </div>
-      </div>
+				<div className="card" ref={cardRef}>
+					<div ref={cardContentRef}>
+						<CoverSection ref={coverRef} />
+						<div
+							style={{
+								position: "relative",
+								height: "60px",
+								background:
+									"linear-gradient(to bottom, #fcf0f0, transparent)",
+								zIndex: 5,
+								pointerEvents: "none",
+							}}
+						/>
+						<InvitationSection ref={inviteRef} />
+						<ProgrammeSection ref={programRef} days={days} />
+						<GallerySection ref={galleryRef} />
+						<UcapanSection
+							ref={ucapanRef}
+							onWriteClick={() => setModal("ucapan")}
+							onRSVPClick={() => setModal("rsvp")}
+						/>
+					</div>
+					<BottomMenu
+						onCall={() => setModal("call")}
+						onLocation={openLocation}
+						onRSVP={() => setModal("rsvp")}
+						onGift={() => setModal("gift")}
+						musicPlaying={musicPlaying}
+						onMusicToggle={handleMusicToggle}
+					/>
+				</div>
+			</div>
 
-      <CallModal   show={modal === 'call'}   onClose={() => setModal(null)} />
-      <RSVPModal   show={modal === 'rsvp'}   onClose={() => setModal(null)} />
-      <UcapanModal show={modal === 'ucapan'} onClose={() => setModal(null)} />
-      <GiftModal   show={modal === 'gift'}   onClose={() => setModal(null)} />
-    </div>
-  )
+			<CallModal show={modal === "call"} onClose={() => setModal(null)} />
+			<RSVPModal show={modal === "rsvp"} onClose={() => setModal(null)} />
+			<UcapanModal
+				show={modal === "ucapan"}
+				onClose={() => setModal(null)}
+			/>
+			<GiftModal show={modal === "gift"} onClose={() => setModal(null)} />
+		</div>
+  );
 }
 
 export default App

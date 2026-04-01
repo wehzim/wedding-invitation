@@ -1,21 +1,35 @@
+const ITEMS = (onCall, onLocation, onRSVP, onGift, musicPlaying, onMusicToggle) => [
+  { icon: 'fa-phone',             label: 'Call',     action: onCall },
+  { icon: 'fa-map-marker-alt',    label: 'Map',      action: onLocation },
+  { icon: 'fa-envelope-open-text',label: 'RSVP',     action: onRSVP },
+  { icon: 'fa-gift',              label: 'Gift',     action: onGift },
+  {
+    icon: musicPlaying ? 'fa-pause' : 'fa-music',
+    label: musicPlaying ? 'Pause' : 'Music',
+    action: onMusicToggle,
+    active: musicPlaying,
+  },
+]
+
 export function BottomMenu({ onCall, onLocation, onRSVP, onGift, musicPlaying, onMusicToggle }) {
+  const items = ITEMS(onCall, onLocation, onRSVP, onGift, musicPlaying, onMusicToggle)
+
   return (
     <div className="bottom-menu">
-      <button title="Contact" onClick={onCall}>
-        <i className="fas fa-phone"></i>
-      </button>
-      <button title="Location" onClick={onLocation}>
-        <i className="fas fa-map-marker-alt"></i>
-      </button>
-      <button title="RSVP" onClick={onRSVP}>
-        <i className="fas fa-envelope-open-text"></i>
-      </button>
-      <button title="Gift" onClick={onGift}>
-        <i className="fas fa-gift"></i>
-      </button>
-      <button title="Music" onClick={onMusicToggle}>
-        <i className={`fas ${musicPlaying ? 'fa-pause-circle' : 'fa-play-circle'}`}></i>
-      </button>
+      <div className="bottom-menu-border">
+        <span className="bottom-menu-ornament">✦</span>
+      </div>
+      {items.map(({ icon, label, action, active }) => (
+        <button
+          key={label}
+          onClick={action}
+          className={`bottom-menu-btn${active ? ' active' : ''}`}
+          title={label}
+        >
+          <i className={`fas ${icon} bottom-menu-icon`} />
+          <span className="bottom-menu-label">{label}</span>
+        </button>
+      ))}
     </div>
   )
 }

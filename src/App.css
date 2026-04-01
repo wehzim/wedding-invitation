@@ -106,30 +106,87 @@ p {
   transform: translateX(-50%);
   width: 100%;
   max-width: 420px;
-  background: rgba(255, 255, 255, 0.9);
-  border-top: 1px solid #ddd;
+  background: rgba(253, 246, 240, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 10px 0;
-  padding-bottom: max(env(safe-area-inset-bottom), 10px);
+  padding: 8px 0;
+  padding-bottom: max(env(safe-area-inset-bottom), 8px);
   z-index: 40;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.8s ease;
+  position: fixed;
 }
 
-.bottom-menu button {
+/* Decorative top border */
+.bottom-menu-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #c9a27e 30%, #c9a27e 70%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-menu-ornament {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(253, 246, 240, 0.88);
+  color: #c9a27e;
+  font-size: 0.5rem;
+  padding: 0 6px;
+  line-height: 1;
+}
+
+.bottom-menu-btn {
+  flex: 1;
   background: none;
   border: none;
-  color: #444;
-  font-size: 1.6rem;
   cursor: pointer;
-  transition: color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  color: #c9a27e;
+  transition: transform 0.18s cubic-bezier(0.25, 0, 0, 1), color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.bottom-menu button:hover {
-  color: #b71c1c;
+.bottom-menu-btn:active {
+  transform: scale(0.88);
+}
+
+.bottom-menu-btn.active .bottom-menu-icon {
+  color: #b07050;
+  animation: music-pulse 1.8s ease-in-out infinite;
+}
+
+.bottom-menu-icon {
+  font-size: 1.1rem;
+  color: #c9a27e;
+  transition: color 0.2s ease;
+}
+
+.bottom-menu-label {
+  font-family: 'IM Fell English', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: #b89070;
+  text-transform: uppercase;
+}
+
+@keyframes music-pulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.18); opacity: 0.75; }
 }
 
 .envelope-container.opened .bottom-menu {
@@ -223,6 +280,34 @@ p {
       0 12px 40px rgba(0, 0, 0, 0.16),
       0 30px 80px rgba(80, 40, 10, 0.18) !important;
   }
+}
+
+/* ─── UCAPAN LOADING ─────────────────────────────────────────────────────────── */
+
+.ucapan-ornaments {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ucapan-ornaments span {
+  color: #c9a27e;
+  font-size: 1.2rem;
+  animation: ornament-breathe 1.2s ease-in-out infinite;
+}
+
+@keyframes ornament-breathe {
+  0%, 100% { opacity: 0.2; transform: scale(0.85); }
+  50%       { opacity: 1;   transform: scale(1.15); }
+}
+
+.ucapan-loading-text {
+  animation: text-fade 2s ease-in-out infinite;
+}
+
+@keyframes text-fade {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
 }
 
 /* ─── SCROLL REVEAL ──────────────────────────────────────────────────────────── */
