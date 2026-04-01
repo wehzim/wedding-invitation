@@ -60,10 +60,7 @@ p {
   position: absolute;
   inset: 0;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
-  overflow-y: scroll;
-  overflow-x: hidden;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  overflow: hidden;
   z-index: 10;
   background-image: url('./assets/bg.png');;
   background-position: center;
@@ -225,4 +222,19 @@ p {
       0 12px 40px rgba(0, 0, 0, 0.16),
       0 30px 80px rgba(80, 40, 10, 0.18) !important;
   }
+}
+
+/* ─── SCROLL REVEAL ──────────────────────────────────────────────────────────── */
+
+.will-reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.85s cubic-bezier(0.25, 0, 0, 1),
+    transform 0.85s cubic-bezier(0.25, 0, 0, 1);
+}
+
+.will-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }

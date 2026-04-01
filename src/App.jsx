@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
 import './App.css'
 import music from './sound/howls-moving-castle.mp3'
 import { WEDDING_DATE } from './config'
@@ -24,12 +26,14 @@ function App() {
   const [modal, setModal] = useState(null)
   const [musicPlaying, setMusicPlaying] = useState(false)
 
-  const audioRef   = useRef(null)
-  const coverRef   = useRef(null)
-  const inviteRef  = useRef(null)
-  const programRef = useRef(null)
-  const galleryRef = useRef(null)
-  const ucapanRef  = useRef(null)
+  const audioRef       = useRef(null)
+  const cardRef        = useRef(null)
+  const cardContentRef = useRef(null)
+  const coverRef       = useRef(null)
+  const inviteRef      = useRef(null)
+  const programRef     = useRef(null)
+  const galleryRef     = useRef(null)
+  const ucapanRef      = useRef(null)
 
   useEffect(() => {
     const calc = () => {
@@ -39,6 +43,43 @@ function App() {
     calc()
     const interval = setInterval(calc, 1000 * 60 * 60)
     return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const card = cardRef.current
+    const content = cardContentRef.current
+    if (!card || !content) return
+
+    const lenis = new Lenis({
+      wrapper: card,
+      content,
+      lerp: 0.09,
+      smoothWheel: true,
+      syncTouch: true,
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+    })
+
+    const checkReveals = () => {
+      const cardRect = card.getBoundingClientRect()
+      const threshold = cardRect.top + cardRect.height * 0.83
+      card.querySelectorAll('.will-reveal:not(.visible)').forEach(el => {
+        if (el.getBoundingClientRect().top < threshold) {
+          el.classList.add('visible')
+        }
+      })
+    }
+
+lenis.on('scroll', () => checkReveals())
+
+    let rafId
+    const raf = time => { lenis.raf(time); rafId = requestAnimationFrame(raf) }
+    rafId = requestAnimationFrame(raf)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      lenis.destroy()
+    }
   }, [])
 
   const fadeInAudio = (audio, targetVolume = 0.5, duration = 2000) => {
@@ -101,16 +142,18 @@ function App() {
           <source src={music} type="audio/mpeg" />
         </audio>
 
-        <div className="card">
-          <CoverSection ref={coverRef} />
-          <InvitationSection ref={inviteRef} />
-          <ProgrammeSection ref={programRef} days={days} />
-          <GallerySection ref={galleryRef} />
-          <UcapanSection
-            ref={ucapanRef}
-            onWriteClick={() => setModal('ucapan')}
-            onRSVPClick={() => setModal('rsvp')}
-          />
+        <div className="card" ref={cardRef}>
+          <div ref={cardContentRef}>
+            <CoverSection ref={coverRef} />
+            <InvitationSection ref={inviteRef} />
+            <ProgrammeSection ref={programRef} days={days} />
+            <GallerySection ref={galleryRef} />
+            <UcapanSection
+              ref={ucapanRef}
+              onWriteClick={() => setModal('ucapan')}
+              onRSVPClick={() => setModal('rsvp')}
+            />
+          </div>
           <BottomMenu
             onCall={() => setModal('call')}
             onLocation={openLocation}

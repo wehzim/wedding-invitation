@@ -2,7 +2,7 @@ import { forwardRef } from 'react'
 
 export const InvitationSection = forwardRef((_, ref) => (
   <section ref={ref} className="flex items-center justify-center py-16 bg-cover bg-center">
-    <div className="max-w-lg mx-auto text-center rounded-lg p-6 pt-16">
+    <div className="will-reveal max-w-lg mx-auto text-center rounded-lg p-6 pt-16">
       <h2 className="text-2xl mt-5 mb-5 text-primary font-scheherazade">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</h2>
       <p className="text-xs text-primary tracking-wider">WITH JOY AND GRATITUDE TO</p>
       <p className="text-xs mb-4 text-primary tracking-wider">ALMIGHTY ALLAH</p>
